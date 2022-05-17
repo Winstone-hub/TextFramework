@@ -1,5 +1,4 @@
 // ** Framework v0.2
-
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <string>
@@ -39,7 +38,7 @@ struct Object
 
 
 
-// ** 초기화 함수
+// ** 초기화 함수 (디폴트 매개변수 : int _Value = 0)
 void Initialize(Object* _Object, char* _Name, int _PosX = 0, int _PosY = 0, int _PosZ = 0);
 
 // ** 이름을 셋팅하는 함수
