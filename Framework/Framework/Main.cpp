@@ -1,6 +1,7 @@
-// ** Framework v0.2
+// ** Framework v0.3
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
+#include <Windows.h>
 #include <string>
 
 using namespace std;
@@ -44,6 +45,18 @@ void Initialize(Object* _Object, char* _Name, int _PosX = 0, int _PosY = 0, int 
 // ** 이름을 셋팅하는 함수
 char* SetName();
 
+// ** 커서의 위치를 변경
+void SetCursorPosition(int _x, int _y);
+
+// ** Text의 색을 변경함.
+void SetTextColor(int _Color);
+
+// ** 출력할 Text의 위치와 색상을 변경해준다. [Color 값은 기본값 : 흰색(15)]
+void OnDrawText(char* _str, int _x, int _y, int _Color = 15);
+
+// ** 출력할 숫자의 위치와 색상을 변경해준다. [Color 값은 기본값 : 흰색(15)]
+void OnDrawText(int _Value, int _x, int _y, int _Color = 15);
+
 // ** 출력 함수
 void Output(Object* _Object);
 
@@ -56,7 +69,7 @@ int main(void)
 	Object* Player = new Object;
 
 	// ** 플레이어 초기화
-	Initialize(Player, nullptr, 10, 20, 30);
+	Initialize(Player, nullptr, 50, 10, 30);
 
 	// ** Enemy선언 및 동적할당.
 	Object* Enemy = new Object;
@@ -64,10 +77,13 @@ int main(void)
 	// ** Enemy 초기화
 	Initialize(Enemy, (char*)"Enemy", 100, 200, 300);
 
+	// ** 콘솔창 버퍼 전체 삭제
+	system("cls"); 
 
 	// ** 출력
-	Output(Player);
-	Output(Enemy);
+	while(true)
+		Output(Player);
+	//Output(Enemy);
 
 	return 0;
 }
@@ -113,14 +129,42 @@ char* SetName()
 	return pName;
 }
 
+
+void SetCursorPosition(int _x, int _y)
+{
+	COORD Pos = { (SHORT)_x, (SHORT)_y };
+
+	SetConsoleCursorPosition(
+		GetStdHandle(STD_OUTPUT_HANDLE), Pos);
+}
+
+void SetTextColor(int _Color)
+{
+	SetConsoleTextAttribute(
+		GetStdHandle(STD_OUTPUT_HANDLE), _Color);
+}
+
+void OnDrawText(char* _str, int _x, int _y, int _Color)
+{
+	SetCursorPosition(_x, _y);
+	SetTextColor(_Color);
+	cout << _str;
+}
+
+void OnDrawText(int _Value, int _x, int _y, int _Color)
+{
+	SetCursorPosition(_x, _y);
+	SetTextColor(_Color);
+
+	char* pText = new char[4];
+	_itoa(_Value, pText, 10);
+	cout << _Value;
+}
+
+
 void Output(Object* _Object)
 {
-	if (_Object->Name != nullptr)
-		cout << "Name : " << _Object->Name << endl;
-
-	cout << "Speed : " << _Object->Speed << endl;
-
-	cout << "X : " << _Object->TransInfo.Position.x <<
-		",  Y : " << _Object->TransInfo.Position.y <<
-		",  Z : " << _Object->TransInfo.Position.z << endl;
+	OnDrawText(_Object->Name,
+		_Object->TransInfo.Position.x,
+		_Object->TransInfo.Position.y);
 }
