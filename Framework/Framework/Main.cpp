@@ -1,4 +1,4 @@
-// ** Framework v0.3.2
+// ** Framework v0.4.1
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <Windows.h>
@@ -75,6 +75,8 @@ void OnDrawText(int _Value, int _x, int _y, int _Color = 15);
 // ** 커서를 보이거나(true) / 안보이게(false) 만들어줌.
 void HideCursor(bool _Visible);
 
+// ** 충돌처리를 함.
+void Collision(Object* _ObjectA, Object* _ObjectB);
 
 // ** 진입점.	
 int main(void)
@@ -172,6 +174,13 @@ int main(void)
 			if (GetAsyncKeyState(VK_RIGHT))
 				Player->TransInfo.Position.x += 1;
 
+
+			Collision(Player, Enemy);
+
+
+
+
+
 			// ** [Space] 키를 입력받음.
 			if (GetAsyncKeyState(VK_SPACE))
 				Player->Info.Texture = (char*)"옷ㅡ";
@@ -215,7 +224,8 @@ void Initialize(Object* _Object, char* _Texture, int _PosX, int _PosY, int _PosZ
 	_Object->TransInfo.Rotation = Vector3(0, 0, 0);
 
 	// ** 크기값
-	_Object->TransInfo.Scale = Vector3(0, 0, 0);
+	_Object->TransInfo.Scale = Vector3(
+		strlen(_Object->Info.Texture), 1, 0);
 }
 
 char* SetName()
@@ -277,4 +287,12 @@ void HideCursor(bool _Visible)
 
 	SetConsoleCursorInfo(
 		GetStdHandle(STD_OUTPUT_HANDLE), &CursorInfo);
+}
+
+void Collision(Object* _ObjectA, Object* _ObjectB)
+{
+	if ((_ObjectA->TransInfo.Position.x + _ObjectA->TransInfo.Scale.x) > _ObjectB->TransInfo.Position.x &&
+		(_ObjectB->TransInfo.Position.x + _ObjectB->TransInfo.Scale.x) > _ObjectA->TransInfo.Position.x &&
+		_ObjectA->TransInfo.Position.y == _ObjectB->TransInfo.Position.y)
+		OnDrawText((char*)"충돌 입니다.", 55, 0, 14);
 }
