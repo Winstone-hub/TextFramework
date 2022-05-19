@@ -1,8 +1,5 @@
 #pragma once
 
-
-
-
 // ** 초기화 함수 (디폴트 매개변수 : int _Value = 0)
 void Initialize(Object* _Object, char* _Texture, int _PosX = 0, int _PosY = 0, int _PosZ = 0);
 
@@ -29,6 +26,9 @@ void Collision(const Object* _ObjectA, const Object* _ObjectB);
 
 // ** Bullet를 생성함.
 Object* CreateBullet(const int _x, const int _y);
+
+// ** 키입력 
+void UpdateInput(Object* _Object);
 
 
 
@@ -143,4 +143,23 @@ Object* CreateBullet(const int _x, const int _y)
 	Initialize(_Object, (char*)"장풍!", _x + 2, _y);
 
 	return _Object;
+}
+
+void UpdateInput(Object* _Object)
+{
+	// ** [상] 키를 입력받음.
+	if (GetAsyncKeyState(VK_UP))
+		_Object->TransInfo.Position.y -= 1;
+
+	// ** [하] 키를 입력받음.
+	if (GetAsyncKeyState(VK_DOWN))
+		_Object->TransInfo.Position.y += 1;
+
+	// ** [좌] 키를 입력받음.
+	if (GetAsyncKeyState(VK_LEFT))
+		_Object->TransInfo.Position.x -= 1;
+
+	// ** [우] 키를 입력받음.
+	if (GetAsyncKeyState(VK_RIGHT))
+		_Object->TransInfo.Position.x += 1;
 }
