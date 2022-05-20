@@ -22,16 +22,16 @@ void OnDrawText(const int _Value, const int _x, const int _y, const int _Color =
 void HideCursor(const bool _Visible);
 
 // ** 충돌처리를 함.
-void Collision(const Object* _ObjectA, const Object* _ObjectB);
+bool Collision(const Object* _ObjectA, const Object* _ObjectB);
 
 // ** Bullet를 생성함.
 Object* CreateBullet(const int _x, const int _y);
 
+// ** Enemy를 생성함.
+Object* CreateEnemy(const int _x, const int _y);
+
 // ** 키입력 
 void UpdateInput(Object* _Object);
-
-
-
 
 
 
@@ -123,7 +123,7 @@ void HideCursor(const bool _Visible)
 		GetStdHandle(STD_OUTPUT_HANDLE), &CursorInfo);
 }
 
-void Collision(const Object* _ObjectA, const Object* _ObjectB)
+bool Collision(const Object* _ObjectA, const Object* _ObjectB)
 {
 	// ** (_Object->TransInfo.Position.x + _Object->TransInfo.Scale.x)   : 우측
 	// ** _Object->TransInfo.Position.x   : 좌측
@@ -131,7 +131,8 @@ void Collision(const Object* _ObjectA, const Object* _ObjectB)
 	if ((_ObjectA->TransInfo.Position.x + _ObjectA->TransInfo.Scale.x) > _ObjectB->TransInfo.Position.x &&
 		(_ObjectB->TransInfo.Position.x + _ObjectB->TransInfo.Scale.x) > _ObjectA->TransInfo.Position.x &&
 		_ObjectA->TransInfo.Position.y == _ObjectB->TransInfo.Position.y)
-		OnDrawText((char*)"충돌 입니다.", 55, 0, 14);
+		return true;
+	return false;
 }
 
 Object* CreateBullet(const int _x, const int _y)
@@ -141,6 +142,17 @@ Object* CreateBullet(const int _x, const int _y)
 
 	// ** 초기화 시 _x 와 _y 는 const 값으로 받아오면, 함수 내부에서 다른 값으로 변경 되지 않기때문에 안전하다.
 	Initialize(_Object, (char*)"장풍!", _x + 2, _y);
+
+	return _Object;
+}
+
+Object* CreateEnemy(const int _x, const int _y)
+{
+	// ** Bullet를 생성 및 동적할당.
+	Object* _Object = new Object;
+
+	// ** 초기화 시 _x 와 _y 는 const 값으로 받아오면, 함수 내부에서 다른 값으로 변경 되지 않기때문에 안전하다.
+	Initialize(_Object, (char*)"홋", _x, _y);
 
 	return _Object;
 }

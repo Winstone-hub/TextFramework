@@ -1,5 +1,4 @@
-// ** Framework v0.4.3
-// ** 숙제 : Bullet & Enemy 충돌 구현.
+// ** Framework v0.5.1
 #include "Headers.h"
 
 
@@ -48,13 +47,19 @@ int main(void)
 	Initialize(Player, (char*)"옷/", 30, 10);
 
 	// ** Enemy선언 및 동적할당.
-	Object* Enemy = new Object;
+	Object* Enemy[32]; //= new Object;
 
 	// ** Enemy 초기화
-	Initialize(Enemy, (char*)"홋", 80, 10);
+	Enemy[0] = new Object;
+	Initialize(Enemy[0], (char*)"홋", 80, 10);
+
+	for (int i = 1; i < 32; ++i)
+		Enemy[i] = nullptr;
+		
 
 	// ** 현재 시간으로 초기화.
 	ULONGLONG Time = GetTickCount64();
+	ULONGLONG EnemyTime = GetTickCount64();
 
 	int Score = 0;
 
@@ -89,12 +94,52 @@ int main(void)
 				BackGround[i].Info.Color = rand() % 8 + 1;
 			}
 
-			
 
+			// ** Enemy 생성.
+			if (EnemyTime + 1500 < GetTickCount64())
+			{
+				EnemyTime = GetTickCount64();
+
+				for (int i = 0; i < 32; ++i)
+				{
+					if (Enemy[i] == nullptr)
+					{
+						/*
+						 * 랜덤값을 초기화 해줌. 큰 값이 나올수 있도록 Time값끼리 곱해줄 것이지만, 
+						 * for문이 빠르게 돌게되면 Time의 증가값보다 빠를수 있기때문에,
+						 * 랜덤값이라고 하더라도 연속으로 같은 값이 나올수 있음.
+						 * i의 값을 곱하고 더해줌으로써 같은 값이 나오지 않도록 해줌.
+						 */
+						srand((GetTickCount() + i * i) * GetTickCount());
+						Enemy[i] = CreateEnemy(115, rand()%30);
+						break;
+					}
+				}
+			}
+
+
+
+
+
+
+
+
+			// ** 숙제 : Bullet & Enemy 충돌 구현.
 			for (int i = 0; i < 128; ++i)
 			{
 				if (Bullet[i] != nullptr)
 				{
+					/*
+					if (Collision(Enemy, Bullet[i]))
+					{
+						delete Bullet[i];
+						Bullet[i] = nullptr;
+
+						--BulletCount;
+					}
+					*/
+					
+					
 					if ((Bullet[i]->TransInfo.Position.x + Bullet[i]->TransInfo.Scale.x) >= 120)
 					{
 						delete Bullet[i];
@@ -105,11 +150,7 @@ int main(void)
 				}
 			}
 
-			Collision(Player, Enemy);
-
 			UpdateInput(Player);
-
-
 
 			// ** [Space] 키를 입력받음.
 			if (GetAsyncKeyState(VK_SPACE))
@@ -130,10 +171,24 @@ int main(void)
 				Player->TransInfo.Position.y,
 				10);
 
-			OnDrawText(Enemy->Info.Texture,
-				Enemy->TransInfo.Position.x,
-				Enemy->TransInfo.Position.y,
-				12);
+			for (int i = 0; i < 32; ++i)
+			{
+				if (Enemy[i])
+				{
+					Enemy[i]->TransInfo.Position.x--;
+
+					OnDrawText(Enemy[i]->Info.Texture,
+						Enemy[i]->TransInfo.Position.x,
+						Enemy[i]->TransInfo.Position.y,
+						12);
+
+					if (Enemy[i]->TransInfo.Position.x <= 0)
+					{
+						delete Enemy[i];
+						Enemy[i] = nullptr;
+					}
+				}
+			}
 
 			// ** Bullet 출력
 			for (int i = 0; i < 128; ++i)
@@ -161,7 +216,7 @@ int main(void)
 
 
 
-// ** 게이지 (월 : 예정)
+// ** 게이지 (월요일 : 예정)
 //  [           \\]
 //  [         \\\\]
 //  [      \\\\\\\]
