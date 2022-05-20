@@ -2,17 +2,17 @@
 
 struct Vector3
 {
-	int x = 0, y = 0, z = 0;
+	float x = 0, y = 0, z = 0;
 
 	// ** 기본 생성자
 	Vector3() {};
 
 	// ** 복사 생성자
-	Vector3(int _x, int _y)
+	Vector3(float _x, float _y)
 		: x(_x), y(_y), z(0) { };
 
 	// ** 복사 생성자
-	Vector3(int _x, int _y, int _z)
+	Vector3(float _x, float _y, float _z)
 		: x(_x), y(_y), z(_z) { };
 };
 
