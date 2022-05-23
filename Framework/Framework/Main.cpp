@@ -1,4 +1,4 @@
-// ** Framework v0.6.1
+// ** Framework v0.6.2
 #include "Headers.h"
 
 
@@ -72,9 +72,7 @@ int main(void)
 
 
 	bool Check = false;
-
-
-
+	int Power = 0;
 
 
 	// ** 출력
@@ -127,28 +125,40 @@ int main(void)
 			}
 			*/
 
-			// ** 숙제 : Bullet & Enemy 충돌 구현.
+
+
+			// ** Bullet의 총 길이만큼 반복문으로 확인.
 			for (int i = 0; i < 128; ++i)
 			{
+				// ** 현재 생산된 Bullet만 확인.
 				if (Bullet[i] != nullptr)
 				{
+					// ** Enemy의 전체 길이만큼 확인.
 					for (int j = 0; j < 32; ++j)
 					{
+						// ** 현재 생산된 Enemy만 확인.
 						if (Enemy[j] != nullptr)
 						{
+							// ** 이 루프까지 들어왔다면 Bullet 과 Enemy 는 현재 생상된 상태.
+							// ** 서로 충돌확인.
 							if (Collision(Enemy[j], Bullet[i]))
 							{
+								// ** 충돌이 되었다면 둘다 삭제
 								delete Enemy[j];
 								Enemy[j] = nullptr;
 
 								delete Bullet[i];
 								Bullet[i] = nullptr;
+
+								// ** 삭제 후에 이 반복루프를 빠저나감.
 								break;
 							}
 						}
 					}
 
+					// ** 현재 생산된 Bullet 중에 
 					if (Bullet[i] != nullptr)
+						// ** Bullet 이 화면을 벗어나면 삭제.
 						if ((Bullet[i]->TransInfo.Position.x + Bullet[i]->TransInfo.Scale.x) >= 120)
 						{
 							delete Bullet[i];
@@ -169,36 +179,39 @@ int main(void)
 			// ** 버튼을 눌럿을때
 			if (!Check && GetAsyncKeyState(VK_SPACE) & 0x0001)
 			{
-				Temp = new Object;
-
-				Temp->TransInfo.Position.x = float(rand() % 120);
-				Temp->TransInfo.Position.y = float(rand() % 30);
-
-				Temp->Info.Texture = (char*)"★";
-
-				Temp->Speed = 0;
-
+				// ** 값을 초기화
+				Power = 0;
 				Check = true;
 			}
 
 			// ** 버튼을 누르고 있을때
 			if (GetAsyncKeyState(VK_SPACE) & 0x8000)
 			{
-				if(Temp->Speed < 10)
-					Temp->Speed++;
-
-				//OnDrawText((char*)"|", 1.0f + Temp->Speed, 28.0f);
+				// ** 버튼을 누르고 있는 중이고, Power가 10보다 작을때 Power를 증가시킴
+				if (Power < 10)
+					Power++;
 			}
 
 			// ** 버튼을 누르지 않은 상태.
 			if (Check && !(GetAsyncKeyState(VK_SPACE) & 0x8000))
 			{
+				// ** 버튼을 놓았을때 ★을 생성.
+				Temp = new Object;
+
+				// ** ★의 위치를 초기화
+				Temp->TransInfo.Position.x = 0.0f;
+				Temp->TransInfo.Position.y = float(rand() % 30);
+
+				Temp->Info.Texture = (char*)"★";
+
+				// ** ★의 Speed 값을 Power 값으로 초기화.
+				Temp->Speed = Power;
+
 				// ** Temp가 Player로 이동하기 위해 방향을 받아옴.
 				Direction = GetDirection(Player, Temp);
 
 				Check = false;
 			}
-
 
 			/*
 			// ** [Space] 키를 입력받음.
@@ -287,7 +300,13 @@ int main(void)
 			OnDrawText((char*)"Score : ",float( 60 - strlen("Score : ")), 1.0f);
 			OnDrawText(++Score, 60.0f, 1.0f);
 
+
+
+			// ** Power 게이지
 			OnDrawText((char*)"[          ]", 1.0f, 28.0f);
+
+			for (int i = 0; i < Power; ++i)
+				OnDrawText((char*)"|", 2.0f + i, 28.0f);
 		}
 	}
 	
