@@ -1,4 +1,4 @@
-// ** Framework v0.6.0
+// ** Framework v0.6.1
 #include "Headers.h"
 
 
@@ -69,6 +69,13 @@ int main(void)
 	// ** Test
 	Object* Temp = nullptr;
 	Vector3 Direction;
+
+
+	bool Check = false;
+
+
+
+
 
 	// ** 출력
 	while (true)
@@ -153,20 +160,49 @@ int main(void)
 			// ** 키 입력
 			UpdateInput(Player);
 
-			// ** [Space] 키를 입력받음.
-			if (GetAsyncKeyState(VK_SPACE))
+
+
+
+
+			
+
+			// ** 버튼을 눌럿을때
+			if (!Check && GetAsyncKeyState(VK_SPACE) & 0x0001)
 			{
 				Temp = new Object;
 
-				Temp->TransInfo.Position.x = rand() % 120;
-				Temp->TransInfo.Position.y = rand() % 30;
+				Temp->TransInfo.Position.x = float(rand() % 120);
+				Temp->TransInfo.Position.y = float(rand() % 30);
 
 				Temp->Info.Texture = (char*)"★";
 
+				Temp->Speed = 0;
+
+				Check = true;
+			}
+
+			// ** 버튼을 누르고 있을때
+			if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+			{
+				if(Temp->Speed < 10)
+					Temp->Speed++;
+
+				//OnDrawText((char*)"|", 1.0f + Temp->Speed, 28.0f);
+			}
+
+			// ** 버튼을 누르지 않은 상태.
+			if (Check && !(GetAsyncKeyState(VK_SPACE) & 0x8000))
+			{
 				// ** Temp가 Player로 이동하기 위해 방향을 받아옴.
 				Direction = GetDirection(Player, Temp);
+
+				Check = false;
 			}
-				/*
+
+
+			/*
+			// ** [Space] 키를 입력받음.
+			if (GetAsyncKeyState(VK_SPACE))
 				for (int i = 0; i < 128; ++i)
 				{
 					if (Bullet[i] == nullptr)
@@ -178,8 +214,7 @@ int main(void)
 						break;
 					}
 				}
-				*/
-
+			*/
 
 			// ** Player 출력
 			OnDrawText(Player->Info.Texture,
@@ -196,13 +231,18 @@ int main(void)
 					12);
 
 				// ** 해당 방향으로 이동함.
-				Temp->TransInfo.Position.x += Direction.x;
-				Temp->TransInfo.Position.y += Direction.y;
-
+				Temp->TransInfo.Position.x += 1 * Temp->Speed;
+				//Temp->TransInfo.Position.y += Direction.y * Temp->Speed;
 
 				// ** 거리를 출력.
 				OnDrawText((char*)"Length : ", float(60 - strlen("Score : ")), 2.0f);
 				OnDrawText((int)GetDistance(Player, Temp), 60.0f, 2.0f);
+
+				if (Temp->TransInfo.Position.x >= 118)
+				{
+					delete Temp;
+					Temp = nullptr;
+				}
 			}
 
 			for (int i = 0; i < 32; ++i)
@@ -246,6 +286,8 @@ int main(void)
 			// ** Score 출력
 			OnDrawText((char*)"Score : ",float( 60 - strlen("Score : ")), 1.0f);
 			OnDrawText(++Score, 60.0f, 1.0f);
+
+			OnDrawText((char*)"[          ]", 1.0f, 28.0f);
 		}
 	}
 	
