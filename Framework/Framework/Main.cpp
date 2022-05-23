@@ -1,6 +1,5 @@
-// ** Framework v0.5.3
+// ** Framework v0.6.0
 #include "Headers.h"
-
 
 
 
@@ -68,15 +67,8 @@ int main(void)
 
 
 	// ** Test
-	Object* Temp = new Object;
-
-	Temp->TransInfo.Position.x = 80;
-	Temp->TransInfo.Position.y = 10;
-
-	Temp->Info.Texture = (char*)"★";
-
-
-
+	Object* Temp = nullptr;
+	Vector3 Direction;
 
 	// ** 출력
 	while (true)
@@ -163,6 +155,18 @@ int main(void)
 
 			// ** [Space] 키를 입력받음.
 			if (GetAsyncKeyState(VK_SPACE))
+			{
+				Temp = new Object;
+
+				Temp->TransInfo.Position.x = rand() % 120;
+				Temp->TransInfo.Position.y = rand() % 30;
+
+				Temp->Info.Texture = (char*)"★";
+
+				// ** Temp가 Player로 이동하기 위해 방향을 받아옴.
+				Direction = GetDirection(Player, Temp);
+			}
+				/*
 				for (int i = 0; i < 128; ++i)
 				{
 					if (Bullet[i] == nullptr)
@@ -174,9 +178,9 @@ int main(void)
 						break;
 					}
 				}
+				*/
 
 
-			
 			// ** Player 출력
 			OnDrawText(Player->Info.Texture,
 				Player->TransInfo.Position.x,
@@ -184,50 +188,22 @@ int main(void)
 				10);
 
 			// ** Temp 출력
-			OnDrawText(Temp->Info.Texture,
-				Temp->TransInfo.Position.x,
-				Temp->TransInfo.Position.y,
-				12);
+			if (Temp)
+			{
+				OnDrawText(Temp->Info.Texture,
+					Temp->TransInfo.Position.x,
+					Temp->TransInfo.Position.y,
+					12);
 
-			// ** 333333333333333333333333333333333333333333333333333333333333333333333333333333333333333
-
-			float x = Player->TransInfo.Position.x - Temp->TransInfo.Position.x;
-			float y = Player->TransInfo.Position.y - Temp->TransInfo.Position.y;
-
-
-			// ** sqrt : 제곱근 함수
-			float Length = sqrt((x * x) + (y * y));
-
-			Vector3 Direction = Vector3(x / Length, y / Length);
-
-			Temp->TransInfo.Position.x += Direction.x;
-			Temp->TransInfo.Position.y += Direction.y;
+				// ** 해당 방향으로 이동함.
+				Temp->TransInfo.Position.x += Direction.x;
+				Temp->TransInfo.Position.y += Direction.y;
 
 
-
-
-
-
-
-
-
-
-
-
-			OnDrawText((char*)"Length : ", float(60 - strlen("Score : ")), 2.0f);
-			OnDrawText((int)Length, 60.0f, 2.0f);
-
-
-
-
-
-
-
-
-
-
-
-
+				// ** 거리를 출력.
+				OnDrawText((char*)"Length : ", float(60 - strlen("Score : ")), 2.0f);
+				OnDrawText((int)GetDistance(Player, Temp), 60.0f, 2.0f);
+			}
 
 			for (int i = 0; i < 32; ++i)
 			{
